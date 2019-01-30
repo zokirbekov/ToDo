@@ -18,6 +18,17 @@ public class SqlWorker(context: Context) : SQLiteOpenHelper(context,Constants.DA
         var create_date = "create_date"
         var update_date = "update_date"
         var note = "note"
+
+        fun dateToString(date:Date) : String
+        {
+            var formater = SimpleDateFormat("yyyy-MM-dd")
+            return formater.format(date)
+        }
+        fun stringToDate(date:String) : Date
+        {
+            var formater = SimpleDateFormat("yyyy-MM-dd")
+            return formater.parse(date)
+        }
     }
     var db:SQLiteDatabase? = null
         get() = field
@@ -87,14 +98,5 @@ public class SqlWorker(context: Context) : SQLiteOpenHelper(context,Constants.DA
     {
         db?.close()
     }
-    private fun dateToString(date:Date) : String
-    {
-        var formater = SimpleDateFormat("yyyy-MM-dd")
-        return formater.format(date)
-    }
-    private fun stringToDate(date:String) : Date
-    {
-        var formater = SimpleDateFormat("yyyy-MM-dd")
-        return formater.parse(date)
-    }
+
 }
