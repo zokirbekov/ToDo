@@ -66,7 +66,6 @@ public class SqlWorker(context: Context) : SQLiteOpenHelper(context,Constants.DA
         var content = ContentValues()
         content.put(title,nt.title)
         content.put(note,nt.note)
-        content.put(create_date,dateToString(nt.create_date))
         content.put(update_date,dateToString(nt.update_date))
         db?.update(Constants.TABLE_NAME,content,"$id = ${nt.id}",null)
     }
