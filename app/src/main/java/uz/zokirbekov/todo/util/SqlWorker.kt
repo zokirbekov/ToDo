@@ -1,5 +1,6 @@
 package uz.zokirbekov.todo.util
 
+import android.annotation.SuppressLint
 import android.content.ContentValues
 import android.content.Context
 import android.database.sqlite.SQLiteDatabase
@@ -7,6 +8,7 @@ import android.database.sqlite.SQLiteOpenHelper
 import uz.zokirbekov.todo.models.Note
 import uz.zokirbekov.todo.Constants
 import uz.zokirbekov.todo.models.Schedule
+import java.sql.Timestamp
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -23,13 +25,23 @@ public class SqlWorker(context: Context) : SQLiteOpenHelper(context,Constants.DA
 
         fun dateToString(date:Date) : String
         {
-            var formater = SimpleDateFormat("yyyy-MM-dd")
+            val formater = SimpleDateFormat("yyyy-MM-dd")
             return formater.format(date)
         }
         fun stringToDate(date:String) : Date
         {
-            var formater = SimpleDateFormat("yyyy-MM-dd")
+            val formater = SimpleDateFormat("yyyy-MM-dd")
             return formater.parse(date)
+        }
+        fun timestampToString(date:Date):String
+        {
+            val formater = SimpleDateFormat("yyyy-MM-dd HH:mm")
+            return formater.format(date)
+        }
+        fun stringToTimestamp(str:String):Date
+        {
+            val formater = SimpleDateFormat("yyyy-MM-dd HH:mm")
+            return formater.parse(str)
         }
     }
     var db:SQLiteDatabase? = null
@@ -103,7 +115,7 @@ public class SqlWorker(context: Context) : SQLiteOpenHelper(context,Constants.DA
     {
         var content = ContentValues()
         content.put(title,sch.title)
-        content.put(time, dateToString(sch.time))
+        content.put(time, sch.time.time.toString())
         content.put(create_date,dateToString(sch.create_date))
         content.put(update_date,dateToString(sch.update_date))
         var i = db?.insert(Constants.SCHEDULE_TABLE_NAME,null,content)
@@ -132,7 +144,7 @@ public class SqlWorker(context: Context) : SQLiteOpenHelper(context,Constants.DA
                 var schedule = Schedule()
                 schedule.id = cursor?.getInt(0)!!
                 schedule.title = cursor?.getString(1)
-                schedule.time = stringToDate(cursor?.getString(2))
+                schedule.time = Timestamp(cursor?.getLong(2))
                 schedule.create_date = stringToDate(cursor?.getString(3))
                 schedule.update_date = stringToDate(cursor?.getString(4))
                 schedules.add(schedule)

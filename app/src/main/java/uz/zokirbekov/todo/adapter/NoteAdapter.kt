@@ -50,9 +50,4 @@ class NoteAdapter(var context:Context,val notes:ArrayList<Note>) : RecyclerView.
         fun OnClick(note:Note,position:Int)
     }
 }
-class VerticalSpaceItemDecoration(var space:Int) : RecyclerView.ItemDecoration()
-{
-    override fun getItemOffsets(outRect: Rect?, view: View?, parent: RecyclerView?, state: RecyclerView.State?) {
-        outRect?.bottom = space
-    }
-}
+

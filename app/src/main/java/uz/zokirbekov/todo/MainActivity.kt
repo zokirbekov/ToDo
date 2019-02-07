@@ -12,7 +12,7 @@ import uz.zokirbekov.todo.fragments.ScheduleFragment
 import uz.zokirbekov.todo.models.Note
 import uz.zokirbekov.todo.util.SqlWorker
 
-class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemReselectedListener {
+class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     var bottomNavigation:BottomNavigationView? = null
 
     var noteFragment = NotesListFragment()
@@ -22,11 +22,12 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemR
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         bottomNavigation = findViewById(R.id.bottomNavigationView)
-        bottomNavigation?.setOnNavigationItemReselectedListener(this)
+        bottomNavigation?.setOnNavigationItemSelectedListener(this)
         switchFragment(R.id.action_notes)
     }
-    override fun onNavigationItemReselected(item: MenuItem) {
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
         switchFragment(item.itemId)
+        return true
     }
 
     fun switchFragment(i:Int)
