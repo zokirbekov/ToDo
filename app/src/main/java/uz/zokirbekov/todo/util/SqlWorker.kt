@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase
 import android.database.sqlite.SQLiteOpenHelper
 import uz.zokirbekov.todo.models.Note
 import uz.zokirbekov.todo.Constants
+import uz.zokirbekov.todo.models.Schedule
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.collections.ArrayList
@@ -18,6 +19,7 @@ public class SqlWorker(context: Context) : SQLiteOpenHelper(context,Constants.DA
         var create_date = "create_date"
         var update_date = "update_date"
         var note = "note"
+        var time = "time"
 
         fun dateToString(date:Date) : String
         {
@@ -47,36 +49,39 @@ public class SqlWorker(context: Context) : SQLiteOpenHelper(context,Constants.DA
 
     private fun init()
     {
-        var command = "CREATE TABLE IF NOT EXISTS ${Constants.TABLE_NAME} ($id INTEGER PRIMARY KEY AUTOINCREMENT," +
+        var createNoteTable = "CREATE TABLE IF NOT EXISTS ${Constants.NOTE_TABLE_NAME} ($id INTEGER PRIMARY KEY AUTOINCREMENT," +
                              "$title TEXT, $note TEXT, $create_date DATE, $update_date DATE );"
-        db?.execSQL(command)
+        var createScheduleTable =  "CREATE TABLE IF NOT EXISTS ${Constants.SCHEDULE_TABLE_NAME} ($id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                             "$title TEXT, $time TIMESTAMP, $create_date DATE, $update_date DATE );"
+        db?.execSQL(createNoteTable)
+        db?.execSQL(createScheduleTable)
     }
     fun insertNote(nt:Note)
     {
         var content = ContentValues()
         content.put(title,nt.title)
-        content.put(Companion.note,nt.note)
+        content.put(note,nt.note)
         content.put(create_date,dateToString(nt.create_date))
         content.put(update_date,dateToString(nt.update_date))
-        var i = db?.insert(Constants.TABLE_NAME,null,content)
+        var i = db?.insert(Constants.NOTE_TABLE_NAME,null,content)
         println()
     }
-    fun update(nt:Note)
+    fun updateNote(nt:Note)
     {
         var content = ContentValues()
         content.put(title,nt.title)
         content.put(note,nt.note)
         content.put(update_date,dateToString(nt.update_date))
-        db?.update(Constants.TABLE_NAME,content,"$id = ${nt.id}",null)
+        db?.update(Constants.NOTE_TABLE_NAME,content,"$id = ${nt.id}",null)
     }
 
-    fun delete(note_id:Int)
+    fun deleteNote(id:Int)
     {
-        db?.delete(Constants.TABLE_NAME,"${id} = ${note_id}",null)
+        db?.delete(Constants.NOTE_TABLE_NAME,"${id} = ${id}",null)
     }
-    fun selectAll() : ArrayList<Note>?
+    fun selectAllNotes() : ArrayList<Note>?
     {
-        var command = "SELECT * FROM ${Constants.TABLE_NAME}"
+        var command = "SELECT * FROM ${Constants.NOTE_TABLE_NAME}"
         var cursor = db?.rawQuery(command,null)
         var notes:ArrayList<Note> = ArrayList<Note>()
         if (cursor?.moveToFirst()!!) {
@@ -93,6 +98,50 @@ public class SqlWorker(context: Context) : SQLiteOpenHelper(context,Constants.DA
         cursor?.close()
         return notes
     }
+
+    fun insertSchdule(sch:Schedule)
+    {
+        var content = ContentValues()
+        content.put(title,sch.title)
+        content.put(time, dateToString(sch.time))
+        content.put(create_date,dateToString(sch.create_date))
+        content.put(update_date,dateToString(sch.update_date))
+        var i = db?.insert(Constants.SCHEDULE_TABLE_NAME,null,content)
+    }
+
+    fun updateSchdule(sch:Schedule)
+    {
+        var content = ContentValues()
+        content.put(title,sch.title)
+        content.put(note, dateToString(sch.time))
+        content.put(update_date,dateToString(sch.update_date))
+        db?.update(Constants.SCHEDULE_TABLE_NAME,content,"$id = ${sch.id}",null)
+    }
+
+    fun deleteSchdule(id:Int)
+    {
+        db?.delete(Constants.SCHEDULE_TABLE_NAME,"${id} = ${id}",null)
+    }
+    fun selectAllSchdules() : ArrayList<Schedule>?
+    {
+        var command = "SELECT * FROM ${Constants.SCHEDULE_TABLE_NAME}"
+        var cursor = db?.rawQuery(command,null)
+        var schedules:ArrayList<Schedule> = ArrayList<Schedule>()
+        if (cursor?.moveToFirst()!!) {
+            do {
+                var schedule = Schedule()
+                schedule.id = cursor?.getInt(0)!!
+                schedule.title = cursor?.getString(1)
+                schedule.time = stringToDate(cursor?.getString(2))
+                schedule.create_date = stringToDate(cursor?.getString(3))
+                schedule.update_date = stringToDate(cursor?.getString(4))
+                schedules.add(schedule)
+            } while (cursor?.moveToNext())
+        }
+        cursor?.close()
+        return schedules
+    }
+
     fun dispose()
     {
         db?.close()

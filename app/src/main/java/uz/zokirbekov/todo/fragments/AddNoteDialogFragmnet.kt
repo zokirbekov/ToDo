@@ -39,7 +39,7 @@ class AddNoteDialogFragmnet() : DialogFragment()
 
         addButton?.setOnClickListener {
             if (isUpdate) {
-                db?.update(updateNote())
+                db?.updateNote(updateNote())
             }
             else
                 db?.insertNote(newNote())

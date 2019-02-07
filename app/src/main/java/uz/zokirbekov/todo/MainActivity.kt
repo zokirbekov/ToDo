@@ -3,19 +3,41 @@ package uz.zokirbekov.todo
 import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.design.widget.BottomNavigationView
 import android.support.v4.app.FragmentManager
+import android.view.MenuItem
 import android.widget.FrameLayout
 import uz.zokirbekov.todo.fragments.NotesListFragment
+import uz.zokirbekov.todo.fragments.ScheduleFragment
 import uz.zokirbekov.todo.models.Note
 import uz.zokirbekov.todo.util.SqlWorker
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemReselectedListener {
+    var bottomNavigation:BottomNavigationView? = null
+
+    var noteFragment = NotesListFragment()
+    var scheduleFragment = ScheduleFragment()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        bottomNavigation = findViewById(R.id.bottomNavigationView)
+        bottomNavigation?.setOnNavigationItemReselectedListener(this)
+        switchFragment(R.id.action_notes)
+    }
+    override fun onNavigationItemReselected(item: MenuItem) {
+        switchFragment(item.itemId)
+    }
+
+    fun switchFragment(i:Int)
+    {
         var fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.contentFragments,NotesListFragment())
+        when(i)
+        {
+            R.id.action_notes -> fragmentTransaction.replace(R.id.contentFragments,noteFragment)
+            R.id.action_schedules -> fragmentTransaction.replace(R.id.contentFragments,scheduleFragment)
+        }
         fragmentTransaction.commit()
     }
+
 }
