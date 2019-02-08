@@ -43,6 +43,11 @@ public class SqlWorker(context: Context) : SQLiteOpenHelper(context,Constants.DA
             val formater = SimpleDateFormat("yyyy-MM-dd HH:mm")
             return formater.parse(str)
         }
+        fun timeToString(date:Date) : String
+        {
+            val formater = SimpleDateFormat("HH:mm")
+            return formater.format(date)
+        }
     }
     var db:SQLiteDatabase? = null
         get() = field
@@ -125,7 +130,7 @@ public class SqlWorker(context: Context) : SQLiteOpenHelper(context,Constants.DA
     {
         var content = ContentValues()
         content.put(title,sch.title)
-        content.put(note, dateToString(sch.time))
+        content.put(time, sch.time.time.toString())
         content.put(update_date,dateToString(sch.update_date))
         db?.update(Constants.SCHEDULE_TABLE_NAME,content,"$id = ${sch.id}",null)
     }

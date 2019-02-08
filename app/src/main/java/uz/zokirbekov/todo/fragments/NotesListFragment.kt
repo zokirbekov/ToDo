@@ -19,9 +19,10 @@ import uz.zokirbekov.todo.R
 import uz.zokirbekov.todo.adapter.NoteAdapter
 import uz.zokirbekov.todo.adapter.VerticalSpaceItemDecoration
 import uz.zokirbekov.todo.models.Note
+import uz.zokirbekov.todo.util.DialogDissmisListener
 import uz.zokirbekov.todo.util.SqlWorker
 
-public class NotesListFragment : Fragment(),AddNoteDialogFragmnet.DialogDissmisListener {
+public class NotesListFragment : Fragment(), DialogDissmisListener {
 
     private var thisFragmnet:NotesListFragment = this
     var notesList:RecyclerView? = null
@@ -37,7 +38,7 @@ public class NotesListFragment : Fragment(),AddNoteDialogFragmnet.DialogDissmisL
         init()
         notesList?.layoutManager = LinearLayoutManager(context,LinearLayout.VERTICAL,false)
         notesList?.addItemDecoration(VerticalSpaceItemDecoration(100))
-        updateListView()
+        notesList?.adapter = NoteAdapter(context, notes!!)
         addButton?.setOnClickListener {
             showAddFragment()
         }
@@ -65,14 +66,7 @@ public class NotesListFragment : Fragment(),AddNoteDialogFragmnet.DialogDissmisL
     private fun updateListView()
     {
         notes = sqlWorker?.selectAllNotes()
-        var adapter = NoteAdapter(context,notes!!)
-        adapter.itemClickListiner = object : NoteAdapter.ItemClickListiner
-        {
-            override fun OnClick(note: Note, position: Int) {
-                var fragmnet = AddNoteDialogFragmnet.newInstanse(note, sqlWorker,thisFragmnet,true)
-                fragmnet.show(fragmentManager,"UPDATE_NOTE_FRAGMENT")
-            }
-        }
-        notesList?.adapter = adapter
+        (notesList?.adapter as? NoteAdapter)?.notes = notes!!
+        notesList?.adapter?.notifyDataSetChanged()
     }
 }

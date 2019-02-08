@@ -16,9 +16,10 @@ import uz.zokirbekov.todo.adapter.ScheduleAdapter
 import uz.zokirbekov.todo.adapter.VerticalSpaceItemDecoration
 import uz.zokirbekov.todo.models.Note
 import uz.zokirbekov.todo.models.Schedule
+import uz.zokirbekov.todo.util.DialogDissmisListener
 import uz.zokirbekov.todo.util.SqlWorker
 
-class ScheduleFragment : Fragment(), AddNoteDialogFragmnet.DialogDissmisListener{
+class ScheduleFragment : Fragment(), DialogDissmisListener {
 
 
     var listView:RecyclerView? = null
@@ -35,13 +36,10 @@ class ScheduleFragment : Fragment(), AddNoteDialogFragmnet.DialogDissmisListener
         init()
         listView?.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL,false)
         listView?.addItemDecoration(VerticalSpaceItemDecoration(100))
-        var sch = Schedule()
-        sch.title = "Hello sch"
-        sqlWorker?.insertSchdule(sch)
         updateListView()
 
         addButton?.setOnClickListener {
-
+            showAddFragment()
         }
 
         return view
@@ -53,6 +51,12 @@ class ScheduleFragment : Fragment(), AddNoteDialogFragmnet.DialogDissmisListener
         schedule = sqlWorker?.selectAllSchdules()
     }
 
+    private fun showAddFragment()
+    {
+        AddScheduleDialogFragment.newInstanse(null,sqlWorker,this).show(fragmentManager,"INSERT_SCHEDULE_FRAGMENT")
+    }
+
+
     private fun updateListView()
     {
         schedule = sqlWorker?.selectAllSchdules()
@@ -60,14 +64,13 @@ class ScheduleFragment : Fragment(), AddNoteDialogFragmnet.DialogDissmisListener
         adapter.itemClickListiner = object : ScheduleAdapter.ItemClickListiner
         {
             override fun OnClick(schedule: Schedule, position: Int) {
-               // var fragmnet = AddNoteDialogFragmnet.newInstanse(schedule, sqlWorker,this@ScheduleFragment,true)
-               // fragmnet.show(fragmentManager,"UPDATE_NOTE_FRAGMENT")
+                AddScheduleDialogFragment.newInstanse(schedule,sqlWorker,this@ScheduleFragment,true).show(fragmentManager,"UPDATE_SCHEDULE_FRAGMENT")
             }
         }
         listView?.adapter = adapter
     }
 
     override fun OnDissmis() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        updateListView() //To change body of created functions use File | Settings | File Templates.
     }
 }

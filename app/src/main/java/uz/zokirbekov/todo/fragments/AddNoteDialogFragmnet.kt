@@ -10,16 +10,13 @@ import android.widget.Button
 import kotlinx.android.synthetic.main.layout_note.*
 import uz.zokirbekov.todo.R
 import uz.zokirbekov.todo.models.Note
+import uz.zokirbekov.todo.util.DialogDissmisListener
 import uz.zokirbekov.todo.util.SqlWorker
 import java.util.*
 
 class AddNoteDialogFragmnet() : DialogFragment()
 {
     var db:SqlWorker? = null
-        get() = field
-        set(value) {
-            field = value
-        }
     var note:Note? = null
     var isUpdate:Boolean = false
 
@@ -53,7 +50,7 @@ class AddNoteDialogFragmnet() : DialogFragment()
         return view
     }
     companion object {
-        fun newInstanse(nt:Note?,db:SqlWorker?,listiner:DialogDissmisListener,isUpdate:Boolean = false) : AddNoteDialogFragmnet
+        fun newInstanse(nt:Note?,db:SqlWorker?,listiner:DialogDissmisListener?,isUpdate:Boolean = false) : AddNoteDialogFragmnet
         {
             var fragment = AddNoteDialogFragmnet()
             fragment.note = nt
@@ -88,8 +85,5 @@ class AddNoteDialogFragmnet() : DialogFragment()
         note?.update_date = Date()
         return note!!
     }
-    interface DialogDissmisListener
-    {
-        fun OnDissmis()
-    }
+
 }

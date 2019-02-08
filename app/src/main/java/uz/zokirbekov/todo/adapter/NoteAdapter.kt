@@ -14,7 +14,7 @@ import uz.zokirbekov.todo.R
 import uz.zokirbekov.todo.models.Note
 import uz.zokirbekov.todo.util.SqlWorker
 
-class NoteAdapter(var context:Context,val notes:ArrayList<Note>) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
+class NoteAdapter(var context:Context,var notes:ArrayList<Note>) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
     var inflater = LayoutInflater.from(context)
     var itemClickListiner:ItemClickListiner? = null
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): NoteViewHolder {
