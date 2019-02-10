@@ -9,17 +9,23 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.ListView
 import uz.zokirbekov.todo.R
-import uz.zokirbekov.todo.adapter.NoteAdapter
-import uz.zokirbekov.todo.adapter.ScheduleAdapter
-import uz.zokirbekov.todo.adapter.VerticalSpaceItemDecoration
-import uz.zokirbekov.todo.models.Note
+import uz.zokirbekov.todo.adapters.ScheduleAdapter
+import uz.zokirbekov.todo.adapters.VerticalSpaceItemDecoration
 import uz.zokirbekov.todo.models.Schedule
 import uz.zokirbekov.todo.util.DialogDissmisListener
+import uz.zokirbekov.todo.util.ItemClickListener
 import uz.zokirbekov.todo.util.SqlWorker
 
-class ScheduleFragment : Fragment(), DialogDissmisListener {
+class ScheduleFragment : Fragment(), DialogDissmisListener, ItemClickListener {
+    override fun <T> OnItemClick(obj: T, position: Int) {
+        AddScheduleDialogFragment.newInstanse((obj as Schedule),sqlWorker,this,true).show(fragmentManager,"UPDATE_SCHEDULE_DIALOG_FRAGMENT")
+    }
+
+    override fun OnDeleteClick(id: Int) {
+        sqlWorker?.deleteSchdule(id)
+        updateListView()
+    }
 
 
     var listView:RecyclerView? = null
@@ -36,10 +42,12 @@ class ScheduleFragment : Fragment(), DialogDissmisListener {
         init()
         listView?.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL,false)
         listView?.addItemDecoration(VerticalSpaceItemDecoration(100))
+        listView?.adapter = ScheduleAdapter(context,schedule!!)
+        (listView?.adapter as? ScheduleAdapter)?.itemClickListiner = this
         updateListView()
 
         addButton?.setOnClickListener {
-            showAddFragment()
+            AddScheduleDialogFragment.newInstanse(Schedule(),sqlWorker,this).show(fragmentManager,"INSERT_SCHEDULE_FRAGMENT")
         }
 
         return view
@@ -51,23 +59,11 @@ class ScheduleFragment : Fragment(), DialogDissmisListener {
         schedule = sqlWorker?.selectAllSchdules()
     }
 
-    private fun showAddFragment()
-    {
-        AddScheduleDialogFragment.newInstanse(null,sqlWorker,this).show(fragmentManager,"INSERT_SCHEDULE_FRAGMENT")
-    }
-
-
     private fun updateListView()
     {
         schedule = sqlWorker?.selectAllSchdules()
-        var adapter = ScheduleAdapter(context,schedule!!)
-        adapter.itemClickListiner = object : ScheduleAdapter.ItemClickListiner
-        {
-            override fun OnClick(schedule: Schedule, position: Int) {
-                AddScheduleDialogFragment.newInstanse(schedule,sqlWorker,this@ScheduleFragment,true).show(fragmentManager,"UPDATE_SCHEDULE_FRAGMENT")
-            }
-        }
-        listView?.adapter = adapter
+        (listView?.adapter as? ScheduleAdapter)?.schedules = schedule!!
+        listView?.adapter?.notifyDataSetChanged()
     }
 
     override fun OnDissmis() {

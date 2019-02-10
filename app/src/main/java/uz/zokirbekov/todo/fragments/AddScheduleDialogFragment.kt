@@ -10,7 +10,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import uz.zokirbekov.todo.R
 import uz.zokirbekov.todo.models.Note
 import uz.zokirbekov.todo.models.Schedule
@@ -29,7 +31,8 @@ class AddScheduleDialogFragment : DialogFragment(), View.OnClickListener
     var textDate: TextView? = null
     var textTime: TextView? = null
     var button: Button? = null
-    var textTitle:TextInputEditText? =null
+    var textTitle: TextInputEditText? = null
+    var delete: ImageView? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater?.inflate(R.layout.fragment_add_schedule,container,false)
@@ -79,10 +82,15 @@ class AddScheduleDialogFragment : DialogFragment(), View.OnClickListener
     override fun onClick(v: View?) {
         when(v) {
             button -> {
+                val schedule = if (isUpdate) updateSchedule() else newSchedule()
+                if (schedule.time < Date()) {
+                    Toast.makeText(context,"Time should be bigger than now",Toast.LENGTH_LONG).show()
+                    return
+                }
                 if (isUpdate)
-                    db?.updateSchdule(updateSchedule())
+                    db?.updateSchdule(schedule)
                 else
-                    db?.insertSchdule(newSchedule())
+                    db?.insertSchdule(schedule)
 
                 dialogDissmisListener?.OnDissmis()
                 dismiss()
@@ -118,7 +126,7 @@ class AddScheduleDialogFragment : DialogFragment(), View.OnClickListener
     }
 
     companion object {
-        fun newInstanse(sch:Schedule?, db:SqlWorker?, listiner: DialogDissmisListener, isUpdate:Boolean = false) : AddScheduleDialogFragment
+        fun newInstanse(sch:Schedule?, db:SqlWorker?,listiner: DialogDissmisListener, isUpdate:Boolean = false) : AddScheduleDialogFragment
         {
             var fragment = AddScheduleDialogFragment()
             fragment.schedule = sch

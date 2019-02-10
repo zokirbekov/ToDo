@@ -1,30 +1,33 @@
 package uz.zokirbekov.todo.fragments
 
-import android.content.ClipData
-import android.content.ClipDescription
-import android.content.DialogInterface
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.view.DragEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
-import android.widget.RelativeLayout
 import uz.zokirbekov.todo.R
-import uz.zokirbekov.todo.adapter.NoteAdapter
-import uz.zokirbekov.todo.adapter.VerticalSpaceItemDecoration
+import uz.zokirbekov.todo.adapters.NoteAdapter
+import uz.zokirbekov.todo.adapters.VerticalSpaceItemDecoration
 import uz.zokirbekov.todo.models.Note
 import uz.zokirbekov.todo.util.DialogDissmisListener
+import uz.zokirbekov.todo.util.ItemClickListener
 import uz.zokirbekov.todo.util.SqlWorker
 
-public class NotesListFragment : Fragment(), DialogDissmisListener {
+public class NotesListFragment : Fragment(), DialogDissmisListener, ItemClickListener {
 
-    private var thisFragmnet:NotesListFragment = this
+    override fun <T> OnItemClick(obj: T, position: Int) {
+        AddNoteDialogFragmnet.newInstanse((obj as Note),sqlWorker,this,true).show(fragmentManager,"UPDATE_NOTE_DIALOG_FRAGMENT")
+    }
+
+    override fun OnDeleteClick(id: Int) {
+        sqlWorker?.deleteNote(id)
+        updateListView()
+    }
+
     var notesList:RecyclerView? = null
     var addButton:FloatingActionButton? = null
     var notes:ArrayList<Note>? = null
@@ -39,8 +42,9 @@ public class NotesListFragment : Fragment(), DialogDissmisListener {
         notesList?.layoutManager = LinearLayoutManager(context,LinearLayout.VERTICAL,false)
         notesList?.addItemDecoration(VerticalSpaceItemDecoration(100))
         notesList?.adapter = NoteAdapter(context, notes!!)
+        (notesList?.adapter as? NoteAdapter)?.itemClickListiner = this
         addButton?.setOnClickListener {
-            showAddFragment()
+            AddNoteDialogFragmnet.newInstanse(null,sqlWorker,this).show(fragmentManager,"INSERT_NOTE_DIALOG_FRAGMENT")
         }
         return view
     }
@@ -49,14 +53,6 @@ public class NotesListFragment : Fragment(), DialogDissmisListener {
     {
         sqlWorker?.db = sqlWorker?.writableDatabase
         notes = sqlWorker?.selectAllNotes()
-    }
-
-    private fun showAddFragment()
-    {
-        var fragment = AddNoteDialogFragmnet()
-        fragment.db = sqlWorker
-        fragment.dialogDissmisListener = this
-        fragment.show(this.activity.supportFragmentManager,"ADD_NOTE_FRAGMENT")
     }
 
     override fun OnDissmis() {

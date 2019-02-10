@@ -1,4 +1,4 @@
-package uz.zokirbekov.todo.adapter
+package uz.zokirbekov.todo.adapters
 
 import android.content.Context
 import android.support.v7.widget.RecyclerView
@@ -6,16 +6,17 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.AnimationUtils
+import android.widget.ImageView
 import android.widget.TextView
 import uz.zokirbekov.todo.R
 import uz.zokirbekov.todo.models.Schedule
+import uz.zokirbekov.todo.util.ItemClickListener
 import uz.zokirbekov.todo.util.SqlWorker
-import java.sql.Timestamp
 
 class ScheduleAdapter(var context:Context, var schedules:ArrayList<Schedule>) : RecyclerView.Adapter<ScheduleAdapter.ScheduleViewHolder>()
 {
     var inflater = LayoutInflater.from(context)
-    var itemClickListiner:ItemClickListiner? = null
+    var itemClickListiner: ItemClickListener? = null
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ScheduleViewHolder {
         val view = inflater.inflate(R.layout.layout_schedule,parent,false)
@@ -34,8 +35,9 @@ class ScheduleAdapter(var context:Context, var schedules:ArrayList<Schedule>) : 
         var animation = AnimationUtils.loadAnimation(context,R.anim.item_animation_fall_down)
         holder?.itemView?.startAnimation(animation)
         holder?.itemView?.setOnClickListener {
-            itemClickListiner?.OnClick(schedules.get(position),position)
+            itemClickListiner?.OnItemClick(schedules.get(position),position)
         }
+        holder?.delete?.setOnClickListener { itemClickListiner?.OnDeleteClick(schedules.get(position).id) }
     }
 
     class ScheduleViewHolder(var view: View) : RecyclerView.ViewHolder(view)
@@ -44,10 +46,7 @@ class ScheduleAdapter(var context:Context, var schedules:ArrayList<Schedule>) : 
         var textTime: TextView? = view.findViewById(R.id.textTime)
         var textCreateDate: TextView? = view.findViewById(R.id.text_create_date)
         var textUpdateDate: TextView? = view.findViewById(R.id.text_update_date)
+        var delete:ImageView? = view.findViewById(R.id.delete)
     }
 
-    interface ItemClickListiner
-    {
-        fun OnClick(schedule:Schedule,position: Int)
-    }
 }
