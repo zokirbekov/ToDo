@@ -67,6 +67,11 @@ class ScheduleFragment : Fragment(), DialogDissmisListener, ItemClickListener {
     }
 
     override fun OnDissmis() {
-        updateListView() //To change body of created functions use File | Settings | File Templates.
+        updateListView()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        sqlWorker?.dispose()
     }
 }

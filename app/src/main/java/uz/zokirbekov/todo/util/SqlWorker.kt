@@ -15,6 +15,8 @@ import kotlin.collections.ArrayList
 
 public class SqlWorker(context: Context) : SQLiteOpenHelper(context,Constants.DATABASE_NAME,null,Constants.SCHEMA)
 {
+
+
     companion object {
         var id = "_id"
         var title = "title"
@@ -22,6 +24,8 @@ public class SqlWorker(context: Context) : SQLiteOpenHelper(context,Constants.DA
         var update_date = "update_date"
         var note = "note"
         var time = "time"
+
+        var LastScheduleId : Int = 0
 
         fun dateToString(date:Date) : String
         {
@@ -68,7 +72,7 @@ public class SqlWorker(context: Context) : SQLiteOpenHelper(context,Constants.DA
     {
         var createNoteTable = "CREATE TABLE IF NOT EXISTS ${Constants.NOTE_TABLE_NAME} ($id INTEGER PRIMARY KEY AUTOINCREMENT," +
                              "$title TEXT, $note TEXT, $create_date DATE, $update_date DATE );"
-        var createScheduleTable =  "CREATE TABLE IF NOT EXISTS ${Constants.SCHEDULE_TABLE_NAME} ($id INTEGER PRIMARY KEY AUTOINCREMENT," +
+        var createScheduleTable =  "CREATE TABLE IF NOT EXISTS ${Constants.SCHEDULE_TABLE_NAME} ($id INTEGER PRIMARY KEY," +
                              "$title TEXT, $time TIMESTAMP, $create_date DATE, $update_date DATE );"
         db?.execSQL(createNoteTable)
         db?.execSQL(createScheduleTable)
@@ -94,7 +98,7 @@ public class SqlWorker(context: Context) : SQLiteOpenHelper(context,Constants.DA
 
     fun deleteNote(id:Int)
     {
-        db?.delete(Constants.NOTE_TABLE_NAME,"${id} = ${id}",null)
+        db?.delete(Constants.NOTE_TABLE_NAME,"${SqlWorker.id} = ${id}",null)
     }
     fun selectAllNotes() : ArrayList<Note>?
     {
@@ -137,7 +141,7 @@ public class SqlWorker(context: Context) : SQLiteOpenHelper(context,Constants.DA
 
     fun deleteSchdule(id:Int)
     {
-        db?.delete(Constants.SCHEDULE_TABLE_NAME,"${id} = ${id}",null)
+        db?.delete(Constants.SCHEDULE_TABLE_NAME,"${SqlWorker.id} = ${id}",null)
     }
     fun selectAllSchdules() : ArrayList<Schedule>?
     {
@@ -156,6 +160,7 @@ public class SqlWorker(context: Context) : SQLiteOpenHelper(context,Constants.DA
             } while (cursor?.moveToNext())
         }
         cursor?.close()
+        LastScheduleId = if (schedules.isEmpty()) 0 else schedules?.last().id
         return schedules
     }
 

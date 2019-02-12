@@ -74,8 +74,6 @@ class AddNoteDialogFragmnet() : DialogFragment()
         var note = Note()
         note.title = textTitle?.text.toString()
         note.note = textNote?.text.toString()
-        note.create_date = Date()
-        note.update_date = Date()
         return note
     }
     private fun updateNote() : Note

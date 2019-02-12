@@ -16,6 +16,7 @@ import android.widget.Toast
 import uz.zokirbekov.todo.R
 import uz.zokirbekov.todo.models.Note
 import uz.zokirbekov.todo.models.Schedule
+import uz.zokirbekov.todo.util.AlarmWorker
 import uz.zokirbekov.todo.util.DateSetListener
 import uz.zokirbekov.todo.util.DialogDissmisListener
 import uz.zokirbekov.todo.util.SqlWorker
@@ -53,7 +54,7 @@ class AddScheduleDialogFragment : DialogFragment(), View.OnClickListener
 
     private fun showSchedule()
     {
-        if (schedule != null)
+        if (schedule != null && isUpdate)
         {
             textTitle?.setText(schedule?.title)
             textDate?.setText(SqlWorker.dateToString(schedule?.time!!))
@@ -65,10 +66,11 @@ class AddScheduleDialogFragment : DialogFragment(), View.OnClickListener
     private fun newSchedule() : Schedule
     {
         var schedule = Schedule()
+        schedule.id = SqlWorker.LastScheduleId + 1
         schedule.title = textTitle?.text.toString()
         schedule.time = SqlWorker.stringToTimestamp("${textDate?.text.toString()} ${textTime?.text.toString()}")
-        schedule.create_date = Date()
-        schedule.update_date = Date()
+        var alarmWorker = AlarmWorker(context)
+        alarmWorker.setAlarm(schedule)
         return schedule
     }
     private fun updateSchedule() : Schedule

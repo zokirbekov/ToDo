@@ -65,4 +65,9 @@ public class NotesListFragment : Fragment(), DialogDissmisListener, ItemClickLis
         (notesList?.adapter as? NoteAdapter)?.notes = notes!!
         notesList?.adapter?.notifyDataSetChanged()
     }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        sqlWorker?.dispose()
+    }
 }

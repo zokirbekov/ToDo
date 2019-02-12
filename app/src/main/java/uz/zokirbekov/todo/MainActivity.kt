@@ -10,6 +10,8 @@ import android.widget.FrameLayout
 import uz.zokirbekov.todo.fragments.NotesListFragment
 import uz.zokirbekov.todo.fragments.ScheduleFragment
 import uz.zokirbekov.todo.models.Note
+import uz.zokirbekov.todo.models.Schedule
+import uz.zokirbekov.todo.util.AlarmWorker
 import uz.zokirbekov.todo.util.SqlWorker
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
@@ -40,5 +42,4 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
         fragmentTransaction.commit()
     }
-
 }
