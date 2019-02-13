@@ -70,26 +70,24 @@ public class SqlWorker(context: Context) : SQLiteOpenHelper(context,Constants.DA
 
     private fun init()
     {
-        var createNoteTable = "CREATE TABLE IF NOT EXISTS ${Constants.NOTE_TABLE_NAME} ($id INTEGER PRIMARY KEY AUTOINCREMENT," +
+        val createNoteTable = "CREATE TABLE IF NOT EXISTS ${Constants.NOTE_TABLE_NAME} ($id INTEGER PRIMARY KEY AUTOINCREMENT," +
                              "$title TEXT, $note TEXT, $create_date DATE, $update_date DATE );"
-        var createScheduleTable =  "CREATE TABLE IF NOT EXISTS ${Constants.SCHEDULE_TABLE_NAME} ($id INTEGER PRIMARY KEY," +
+        val createScheduleTable =  "CREATE TABLE IF NOT EXISTS ${Constants.SCHEDULE_TABLE_NAME} ($id INTEGER PRIMARY KEY," +
                              "$title TEXT, $time TIMESTAMP, $create_date DATE, $update_date DATE );"
         db?.execSQL(createNoteTable)
         db?.execSQL(createScheduleTable)
     }
     fun insertNote(nt:Note)
     {
-        var content = ContentValues()
+        val content = ContentValues()
         content.put(title,nt.title)
         content.put(note,nt.note)
         content.put(create_date,dateToString(nt.create_date))
         content.put(update_date,dateToString(nt.update_date))
-        var i = db?.insert(Constants.NOTE_TABLE_NAME,null,content)
-        println()
     }
     fun updateNote(nt:Note)
     {
-        var content = ContentValues()
+        val content = ContentValues()
         content.put(title,nt.title)
         content.put(note,nt.note)
         content.put(update_date,dateToString(nt.update_date))
@@ -102,37 +100,36 @@ public class SqlWorker(context: Context) : SQLiteOpenHelper(context,Constants.DA
     }
     fun selectAllNotes() : ArrayList<Note>?
     {
-        var command = "SELECT * FROM ${Constants.NOTE_TABLE_NAME}"
-        var cursor = db?.rawQuery(command,null)
-        var notes:ArrayList<Note> = ArrayList<Note>()
+        val command = "SELECT * FROM ${Constants.NOTE_TABLE_NAME}"
+        val cursor = db?.rawQuery(command,null)
+        val notes:ArrayList<Note> = ArrayList<Note>()
         if (cursor?.moveToFirst()!!) {
             do {
-                var note = Note()
-                note.id = cursor?.getInt(0)!!
-                note.title = cursor?.getString(1)
-                note.note = cursor?.getString(2)
-                note.create_date = stringToDate(cursor?.getString(3))
-                note.update_date = stringToDate(cursor?.getString(4))
+                val note = Note()
+                note.id = cursor.getInt(0)
+                note.title = cursor.getString(1)
+                note.note = cursor.getString(2)
+                note.create_date = stringToDate(cursor.getString(3))
+                note.update_date = stringToDate(cursor.getString(4))
                 notes.add(note)
-            } while (cursor?.moveToNext())
+            } while (cursor.moveToNext())
         }
-        cursor?.close()
+        cursor.close()
         return notes
     }
 
     fun insertSchdule(sch:Schedule)
     {
-        var content = ContentValues()
+        val content = ContentValues()
         content.put(title,sch.title)
         content.put(time, sch.time.time.toString())
         content.put(create_date,dateToString(sch.create_date))
         content.put(update_date,dateToString(sch.update_date))
-        var i = db?.insert(Constants.SCHEDULE_TABLE_NAME,null,content)
     }
 
     fun updateSchdule(sch:Schedule)
     {
-        var content = ContentValues()
+        val content = ContentValues()
         content.put(title,sch.title)
         content.put(time, sch.time.time.toString())
         content.put(update_date,dateToString(sch.update_date))
@@ -145,22 +142,22 @@ public class SqlWorker(context: Context) : SQLiteOpenHelper(context,Constants.DA
     }
     fun selectAllSchdules() : ArrayList<Schedule>?
     {
-        var command = "SELECT * FROM ${Constants.SCHEDULE_TABLE_NAME}"
-        var cursor = db?.rawQuery(command,null)
-        var schedules:ArrayList<Schedule> = ArrayList<Schedule>()
+        val command = "SELECT * FROM ${Constants.SCHEDULE_TABLE_NAME}"
+        val cursor = db?.rawQuery(command,null)
+        val schedules:ArrayList<Schedule> = ArrayList<Schedule>()
         if (cursor?.moveToFirst()!!) {
             do {
-                var schedule = Schedule()
-                schedule.id = cursor?.getInt(0)!!
-                schedule.title = cursor?.getString(1)
-                schedule.time = Timestamp(cursor?.getLong(2))
-                schedule.create_date = stringToDate(cursor?.getString(3))
-                schedule.update_date = stringToDate(cursor?.getString(4))
+                val schedule = Schedule()
+                schedule.id = cursor.getInt(0)
+                schedule.title = cursor.getString(1)
+                schedule.time = Timestamp(cursor.getLong(2))
+                schedule.create_date = stringToDate(cursor.getString(3))
+                schedule.update_date = stringToDate(cursor.getString(4))
                 schedules.add(schedule)
-            } while (cursor?.moveToNext())
+            } while (cursor.moveToNext())
         }
-        cursor?.close()
-        LastScheduleId = if (schedules.isEmpty()) 0 else schedules?.last().id
+        cursor.close()
+        LastScheduleId = if (schedules.isEmpty()) 0 else schedules.last().id
         return schedules
     }
 
