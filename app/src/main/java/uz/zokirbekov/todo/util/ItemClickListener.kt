@@ -1,7 +1,7 @@
 package uz.zokirbekov.todo.util
 
-interface ItemClickListener
+interface ItemClickListener<T>
 {
-    fun <T>OnItemClick(obj:T,position: Int)
-    fun OnDeleteClick(id:Int)
+    fun OnItemClick(obj:T,position: Int)
+    fun OnDeleteClick(obj:T)
 }

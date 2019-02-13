@@ -29,8 +29,17 @@ class AlarmWorker(var context: Context) {
         alarmManager?.set(AlarmManager.RTC_WAKEUP,cur_cal.timeInMillis,pendingIntent)
     }
 
-    fun cancelAlarm()
+    fun update(sch: Schedule)
     {
+        cancelAlarm(sch)
+        setAlarm(sch)
+    }
 
+    fun cancelAlarm(sch: Schedule)
+    {
+        var intent = Intent(context, TimeReciver::class.java)
+        intent.putExtra("title",sch.title)
+        var pendingIntent = PendingIntent.getBroadcast(context,sch.id,intent,0)
+        alarmManager?.cancel(pendingIntent)
     }
 }

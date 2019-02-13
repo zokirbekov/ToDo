@@ -13,25 +13,27 @@ import uz.zokirbekov.todo.R
 import uz.zokirbekov.todo.adapters.ScheduleAdapter
 import uz.zokirbekov.todo.adapters.VerticalSpaceItemDecoration
 import uz.zokirbekov.todo.models.Schedule
+import uz.zokirbekov.todo.util.AlarmWorker
 import uz.zokirbekov.todo.util.DialogDissmisListener
 import uz.zokirbekov.todo.util.ItemClickListener
 import uz.zokirbekov.todo.util.SqlWorker
 
-class ScheduleFragment : Fragment(), DialogDissmisListener, ItemClickListener {
-    override fun <T> OnItemClick(obj: T, position: Int) {
-        AddScheduleDialogFragment.newInstanse((obj as Schedule),sqlWorker,this,true).show(fragmentManager,"UPDATE_SCHEDULE_DIALOG_FRAGMENT")
+class ScheduleFragment : Fragment(), DialogDissmisListener, ItemClickListener<Schedule> {
+    override fun OnItemClick(obj: Schedule, position: Int) {
+        AddScheduleDialogFragment.newInstanse(obj,sqlWorker,this,true).show(fragmentManager,"UPDATE_SCHEDULE_DIALOG_FRAGMENT")
     }
 
-    override fun OnDeleteClick(id: Int) {
-        sqlWorker?.deleteSchdule(id)
+    override fun OnDeleteClick(obj: Schedule) {
+        sqlWorker?.deleteSchdule(obj.id)
+        alarmWorker?.cancelAlarm(obj)
         updateListView()
     }
-
 
     var listView:RecyclerView? = null
     var addButton:FloatingActionButton? = null
     var schedule:ArrayList<Schedule>? = null
     var sqlWorker: SqlWorker? = null
+    var alarmWorker:AlarmWorker? = null
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         var view = inflater?.inflate(R.layout.fragment_schedule,container,false)
@@ -39,6 +41,7 @@ class ScheduleFragment : Fragment(), DialogDissmisListener, ItemClickListener {
         listView = view?.findViewById(R.id.scheduleListView)
         addButton = view?.findViewById(R.id.addButton)
         sqlWorker = SqlWorker(context)
+        alarmWorker = AlarmWorker(context)
         init()
         listView?.layoutManager = LinearLayoutManager(context, LinearLayout.VERTICAL,false)
         listView?.addItemDecoration(VerticalSpaceItemDecoration(100))

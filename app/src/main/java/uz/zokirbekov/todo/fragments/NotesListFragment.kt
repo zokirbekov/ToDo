@@ -17,14 +17,14 @@ import uz.zokirbekov.todo.util.DialogDissmisListener
 import uz.zokirbekov.todo.util.ItemClickListener
 import uz.zokirbekov.todo.util.SqlWorker
 
-public class NotesListFragment : Fragment(), DialogDissmisListener, ItemClickListener {
+public class NotesListFragment : Fragment(), DialogDissmisListener, ItemClickListener<Note>{
 
-    override fun <T> OnItemClick(obj: T, position: Int) {
-        AddNoteDialogFragmnet.newInstanse((obj as Note),sqlWorker,this,true).show(fragmentManager,"UPDATE_NOTE_DIALOG_FRAGMENT")
+    override fun OnItemClick(obj: Note, position: Int) {
+        AddNoteDialogFragmnet.newInstanse(obj,sqlWorker,this,true).show(fragmentManager,"UPDATE_NOTE_DIALOG_FRAGMENT")
     }
 
-    override fun OnDeleteClick(id: Int) {
-        sqlWorker?.deleteNote(id)
+    override fun OnDeleteClick(obj: Note) {
+        sqlWorker?.deleteNote(obj.id)
         updateListView()
     }
 

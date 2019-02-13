@@ -16,7 +16,7 @@ import uz.zokirbekov.todo.util.SqlWorker
 class ScheduleAdapter(var context:Context, var schedules:ArrayList<Schedule>) : RecyclerView.Adapter<ScheduleAdapter.ScheduleViewHolder>()
 {
     var inflater = LayoutInflater.from(context)
-    var itemClickListiner: ItemClickListener? = null
+    var itemClickListiner: ItemClickListener<Schedule>? = null
 
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): ScheduleViewHolder {
         val view = inflater.inflate(R.layout.layout_schedule,parent,false)
@@ -37,7 +37,7 @@ class ScheduleAdapter(var context:Context, var schedules:ArrayList<Schedule>) : 
         holder?.itemView?.setOnClickListener {
             itemClickListiner?.OnItemClick(schedules.get(position),position)
         }
-        holder?.delete?.setOnClickListener { itemClickListiner?.OnDeleteClick(schedules.get(position).id) }
+        holder?.delete?.setOnClickListener { itemClickListiner?.OnDeleteClick(schedules.get(position)) }
     }
 
     class ScheduleViewHolder(var view: View) : RecyclerView.ViewHolder(view)

@@ -15,7 +15,7 @@ import uz.zokirbekov.todo.util.SqlWorker
 
 class NoteAdapter(var context:Context,var notes:ArrayList<Note>) : RecyclerView.Adapter<NoteAdapter.NoteViewHolder>() {
     var inflater = LayoutInflater.from(context)
-    var itemClickListiner:ItemClickListener? = null
+    var itemClickListiner:ItemClickListener<Note>? = null
     override fun onCreateViewHolder(parent: ViewGroup?, viewType: Int): NoteViewHolder {
         var view = inflater.inflate(R.layout.layout_note,parent,false)
         return NoteViewHolder(view)
@@ -30,7 +30,7 @@ class NoteAdapter(var context:Context,var notes:ArrayList<Note>) : RecyclerView.
         holder?.textNote?.text = notes.get(position).note
         holder?.textCreateDate?.text = "Create Date : ${SqlWorker.dateToString(notes.get(position).create_date)}"
         holder?.textUpdateDate?.text = "Update Date : ${SqlWorker.dateToString(notes.get(position).update_date)}"
-        holder?.delete?.setOnClickListener { itemClickListiner?.OnDeleteClick(notes.get(position).id) }
+        holder?.delete?.setOnClickListener { itemClickListiner?.OnDeleteClick(notes.get(position)) }
         var animation = AnimationUtils.loadAnimation(context,R.anim.item_animation_fall_down)
         holder?.itemView?.startAnimation(animation)
         holder?.itemView?.setOnClickListener {

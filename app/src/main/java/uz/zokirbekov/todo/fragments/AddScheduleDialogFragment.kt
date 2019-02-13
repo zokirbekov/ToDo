@@ -28,6 +28,7 @@ class AddScheduleDialogFragment : DialogFragment(), View.OnClickListener
     var schedule: Schedule? = null
     var isUpdate:Boolean = false
     var dialogDissmisListener:DialogDissmisListener? = null
+    lateinit var alarmWorker: AlarmWorker
 
     var textDate: TextView? = null
     var textTime: TextView? = null
@@ -46,6 +47,8 @@ class AddScheduleDialogFragment : DialogFragment(), View.OnClickListener
         button?.setOnClickListener(this)
         textDate?.setOnClickListener(this)
         textTime?.setOnClickListener(this)
+
+        alarmWorker = AlarmWorker(context)
 
         dialog.window.setBackgroundDrawableResource(R.drawable.circle_border)
         showSchedule()
@@ -69,8 +72,6 @@ class AddScheduleDialogFragment : DialogFragment(), View.OnClickListener
         schedule.id = SqlWorker.LastScheduleId + 1
         schedule.title = textTitle?.text.toString()
         schedule.time = SqlWorker.stringToTimestamp("${textDate?.text.toString()} ${textTime?.text.toString()}")
-        var alarmWorker = AlarmWorker(context)
-        alarmWorker.setAlarm(schedule)
         return schedule
     }
     private fun updateSchedule() : Schedule
@@ -90,9 +91,15 @@ class AddScheduleDialogFragment : DialogFragment(), View.OnClickListener
                     return
                 }
                 if (isUpdate)
+                {
                     db?.updateSchdule(schedule)
+                    alarmWorker.update(schedule)
+                }
                 else
+                {
                     db?.insertSchdule(schedule)
+                    alarmWorker.setAlarm(schedule)
+                }
 
                 dialogDissmisListener?.OnDissmis()
                 dismiss()
