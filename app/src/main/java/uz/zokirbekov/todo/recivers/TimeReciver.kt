@@ -33,8 +33,8 @@ class TimeReciver : BroadcastReceiver() {
         notification.setAutoCancel(true)
                 .setSmallIcon(R.drawable.delete)
                 .setDefaults(NotificationCompat.DEFAULT_ALL)
-                .setContentText("Hello world")
-                .setContentTitle(intent?.extras?.getString("title"))
+                .setContentText(intent?.extras?.getString("title"))
+                .setContentTitle("Remember")
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
         notManager.notify(1,notification.build())
     }
