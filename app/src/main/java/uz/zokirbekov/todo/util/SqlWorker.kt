@@ -84,6 +84,7 @@ public class SqlWorker(context: Context) : SQLiteOpenHelper(context,Constants.DA
         content.put(note,nt.note)
         content.put(create_date,dateToString(nt.create_date))
         content.put(update_date,dateToString(nt.update_date))
+        var i = db?.insert(Constants.NOTE_TABLE_NAME,null,content)
     }
     fun updateNote(nt:Note)
     {
@@ -125,6 +126,7 @@ public class SqlWorker(context: Context) : SQLiteOpenHelper(context,Constants.DA
         content.put(time, sch.time.time.toString())
         content.put(create_date,dateToString(sch.create_date))
         content.put(update_date,dateToString(sch.update_date))
+        var i = db?.insert(Constants.SCHEDULE_TABLE_NAME,null,content)
     }
 
     fun updateSchdule(sch:Schedule)
