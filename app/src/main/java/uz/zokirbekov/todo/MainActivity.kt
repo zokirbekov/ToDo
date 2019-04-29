@@ -16,6 +16,12 @@ import uz.zokirbekov.todo.models.Note
 import uz.zokirbekov.todo.models.Schedule
 import uz.zokirbekov.todo.util.AlarmWorker
 import uz.zokirbekov.todo.util.SqlWorker
+import android.view.KeyEvent.KEYCODE_BACK
+import android.view.KeyCharacterMap
+import android.view.KeyEvent
+import android.view.ViewConfiguration
+
+
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     var bottomNavigation:BottomNavigationView? = null
@@ -42,11 +48,24 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         bottomNavigation?.setBackgroundColor(ContextCompat.getColor(this,rId))
         bottomNavigation?.itemBackgroundResource = rId
         toolbar?.setBackgroundColor(ContextCompat.getColor(this,rId))
+        var color:Int = 0
         when (rId)
         {
-            R.color.colorPrimary -> window.statusBarColor = ContextCompat.getColor(this,R.color.colorPrimaryDark)
-            R.color.colorGreen -> window.statusBarColor = ContextCompat.getColor(this,R.color.colorGreenDark)
+            R.color.colorPrimary -> {
+                color = ContextCompat.getColor(this,R.color.colorPrimaryDark)
+            }
+            R.color.colorGreen -> {
+                color  = ContextCompat.getColor(this,R.color.colorGreenDark)
+            }
         }
+        val hasMenuKey = ViewConfiguration.get(this).hasPermanentMenuKey()
+        val hasBackKey = KeyCharacterMap.deviceHasKey(KeyEvent.KEYCODE_BACK)
+
+        if (!hasMenuKey && !hasBackKey) {
+            window.navigationBarColor = color
+        }
+        window.statusBarColor = color
+
     }
 
     fun switchFragment(i:Int)
